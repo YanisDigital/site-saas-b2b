@@ -1,0 +1,1176 @@
+<!doctype html>
+<!--
+  ============================================================================
+  ЛЕНДИНГ BETA-ЗАПУСКУ — статичний односторінковий сайт
+  Система персонального та корпоративного моніторингу професійної інформації
+  Візуальний напрям: «Instrument» — точний вимірювальний прилад (див. landing-spec.md, розділ 2)
+  ----------------------------------------------------------------------------
+  ДІЇ ПЕРЕД ЗАПУСКОМ (детально — landing-spec.md, розділ 7).
+  Кожен пункт має коментар-маркер у коді нижче — шукайте за назвою:
+
+   1. Назва продукту — замінити рядок [Назва] пошуком-заміною по всьому файлу
+   2. Маркер "АНОНС" — текст верхнього рядка
+   3. Маркер "СТАТУС ЗАПУСКУ" — блок статусу beta
+   4. Маркер "ВІДЕО" — вставити відео (video або iframe) + постер
+   5. Маркери "СКРИНШОТ 1..4" — 4 зображення + змістовні alt
+   6. Маркер "ФОРМА" — задати data-endpoint на формі (Formspree / Getform / API)
+   7. Маркер "КОНТАКТ" — email або Telegram у футері та в помилці форми
+   8. Зображення assets/og-image.png, assets/favicon.svg
+   9. Маркер "АНАЛІТИКА" — сніпет Plausible / GA (необов'язково)
+  ============================================================================
+-->
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FBFBF9">
+
+<!-- [Назва] -->
+<title>[Назва] — система моніторингу професійної інформації</title>
+<meta name="description" content="Персональна та корпоративна система моніторингу інформації. Задайте теми, підключіть джерела — отримуйте лише релевантне. Публічна beta.">
+
+<!-- [Назва] -->
+<meta property="og:title" content="[Назва] — система моніторингу професійної інформації">
+<meta property="og:description" content="Ви визначаєте, що важливо. Система стежить за цим замість вас. Публічна beta.">
+<meta property="og:image" content="assets/og-image.png">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;450;500;600;700&display=swap" rel="stylesheet">
+
+<script>document.documentElement.classList.add('js');</script>
+
+<style>
+  /* ======================================================================
+     ТОКЕНИ
+     ====================================================================== */
+  :root{
+    --bg:#FBFBF9;
+    --bg-tint:#F4F4F0;
+    --surface:#FFFFFF;
+    --ink:#10131A;
+    --ink-mid:#3A3F4A;
+    --ink-soft:#5D626D;
+    --line:#E4E3DE;
+    --line-strong:#D2D1CA;
+    --accent:#3B44F6;
+    --accent-press:#2A32D6;
+    --accent-ink:#FFFFFF;
+    --accent-soft:#ECEDFF;
+    --footer-bg:#10131A;
+    --footer-ink:#F2F2EE;
+    --footer-soft:#8B909C;
+
+    --r-sm:8px;
+    --r-md:12px;
+    --r-lg:18px;
+    --pill:999px;
+
+    --container:1140px;
+    --gutter:24px;
+    --spine:96px;
+
+    --font-sans:"IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono:"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+
+  /* ======================================================================
+     RESET
+     ====================================================================== */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  html.js{scroll-behavior:smooth}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--font-sans);
+    font-size:16px;
+    font-weight:400;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  @media (min-width:768px){ body{font-size:17px} }
+
+  img{max-width:100%;display:block}
+  a{color:inherit;text-decoration:none}
+  button,input,textarea,select{font:inherit;color:inherit}
+  ::selection{background:var(--accent);color:var(--accent-ink)}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+  /* Плівкове зерно поверх усієї сторінки */
+  body::after{
+    content:"";position:fixed;inset:0;z-index:9998;pointer-events:none;
+    opacity:.028;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* Індикатор прокрутки */
+  .scroll-progress{
+    position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;
+    background:var(--accent);transform:scaleX(0);transform-origin:0 50%;
+    transition:transform .1s linear;
+  }
+
+  /* ======================================================================
+     LAYOUT
+     ====================================================================== */
+  .container{max-width:var(--container);margin-inline:auto;padding-inline:20px}
+  @media (min-width:768px){ .container{padding-inline:var(--gutter)} }
+
+  section{
+    border-top:1px solid var(--line);
+    padding-block:56px;
+    scroll-margin-top:64px;
+  }
+  @media (min-width:768px){ section{padding-block:88px} }
+
+  /* Ruled-ledger заголовок секції: моно-мітка з номером на лінійці */
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:11px;
+    font-weight:500;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    display:flex;align-items:center;gap:10px;
+    margin-bottom:22px;
+  }
+  .eyebrow b{color:var(--accent);font-weight:600}
+  .eyebrow::after{content:"";flex:1;height:1px;background:var(--line);max-width:120px}
+
+  .section-head{max-width:46ch;margin-bottom:40px}
+  .section-head.wide{max-width:58ch}
+
+  h1,h2,h3{font-weight:600;letter-spacing:-.03em;line-height:1.08}
+  h2{font-size:clamp(1.85rem,3.4vw,2.7rem);margin-bottom:16px}
+  h3{font-size:1.15rem;letter-spacing:-.02em;line-height:1.3}
+  .lead{color:var(--ink-mid);font-size:1.06em;line-height:1.6}
+
+  /* ======================================================================
+     КНОПКИ / ПОСИЛАННЯ
+     ====================================================================== */
+  .btn{
+    --pad:15px 26px;
+    display:inline-flex;align-items:center;gap:10px;
+    padding:var(--pad);
+    border-radius:var(--pill);
+    font-weight:500;font-size:15px;
+    letter-spacing:-.01em;
+    border:1px solid transparent;
+    cursor:pointer;
+    transition:transform .18s var(--ease), background-color .18s, border-color .18s, color .18s;
+    white-space:nowrap;
+  }
+  .btn svg{width:16px;height:16px;transition:transform .2s var(--ease)}
+  .btn-primary{background:var(--accent);color:var(--accent-ink)}
+  .btn-primary:hover{background:var(--accent-press)}
+  .btn-primary:hover svg{transform:translateX(3px)}
+  .btn-secondary{background:transparent;border-color:var(--line-strong);color:var(--ink)}
+  .btn-secondary:hover{border-color:var(--ink)}
+  .btn-lg{--pad:17px 30px;font-size:16px}
+
+  @media (max-width:560px){
+    .btn{white-space:normal;text-align:center;justify-content:center}
+    .hero-cta .btn,
+    .status-body .btn,
+    .final .btn,
+    .form-foot .btn{width:100%}
+  }
+
+  .link-mono{
+    font-family:var(--font-mono);font-size:13px;font-weight:500;
+    color:var(--accent);display:inline-flex;align-items:center;gap:7px;
+    letter-spacing:.02em;
+  }
+  .link-mono svg{width:14px;height:14px;transition:transform .2s var(--ease)}
+  .link-mono:hover svg{transform:translateX(3px)}
+
+  /* ======================================================================
+     АНОНС
+     ====================================================================== */
+  .announce{
+    background:var(--ink);color:var(--footer-ink);
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.02em;
+    text-align:center;padding:9px 16px;
+  }
+  .announce .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:9px;vertical-align:1px;animation:pulse 2.4s var(--ease) infinite}
+  .announce a{color:#fff;text-decoration:underline;text-underline-offset:3px;text-decoration-color:rgba(255,255,255,.4)}
+  .announce a:hover{text-decoration-color:#fff}
+
+  /* ======================================================================
+     ХЕДЕР
+     ====================================================================== */
+  .site-header{
+    position:sticky;top:0;z-index:50;
+    background:color-mix(in srgb, var(--bg) 82%, transparent);
+    backdrop-filter:blur(14px) saturate(1.4);
+    -webkit-backdrop-filter:blur(14px) saturate(1.4);
+    border-bottom:1px solid var(--line);
+  }
+  .site-header .container{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .wordmark{
+    font-weight:600;font-size:17px;letter-spacing:-.03em;
+    display:inline-flex;align-items:center;gap:7px;
+  }
+  .wordmark i{
+    width:9px;height:9px;border:2px solid var(--accent);border-radius:2px;
+    display:inline-block;transform:rotate(0deg);transition:transform .4s var(--ease);
+  }
+  .wordmark:hover i{transform:rotate(90deg)}
+  .nav{display:none;gap:4px;align-items:center}
+  .nav a{
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;
+    color:var(--ink-soft);padding:8px 12px;border-radius:6px;
+    transition:color .15s, background-color .15s;
+  }
+  .nav a:hover{color:var(--ink);background:var(--bg-tint)}
+  @media (min-width:920px){ .nav{display:flex} }
+  .site-header .btn{padding:9px 17px;font-size:13px}
+
+  /* ======================================================================
+     HERO
+     ====================================================================== */
+  .hero{border-top:none;padding-top:64px;padding-bottom:0;position:relative;overflow:hidden}
+  .hero::before{
+    content:"";position:absolute;left:50%;top:-180px;transform:translateX(-50%);
+    width:1300px;height:720px;pointer-events:none;z-index:0;
+    background:
+      radial-gradient(640px 460px at 26% 22%, rgba(59,68,246,.15), transparent 68%),
+      radial-gradient(560px 460px at 82% 6%, rgba(59,68,246,.10), transparent 66%),
+      radial-gradient(420px 340px at 60% 70%, rgba(59,68,246,.06), transparent 70%);
+    filter:blur(6px);
+  }
+  .hero__inner{position:relative;z-index:1;max-width:var(--container);margin-inline:auto;padding-inline:20px}
+  @media (min-width:768px){ .hero__inner{padding-inline:var(--gutter)} }
+
+  .hero .eyebrow{margin-bottom:26px}
+  .hero h1{
+    font-size:clamp(2.7rem,6.6vw,4.4rem);
+    font-weight:600;
+    letter-spacing:-.04em;
+    line-height:1.02;
+    max-width:17ch;
+    margin-bottom:24px;
+  }
+  .hero h1 em{font-style:normal;color:var(--accent)}
+  .hero .lead{max-width:50ch;font-size:clamp(1.05rem,1.6vw,1.2rem);margin-bottom:34px}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:26px}
+  .hero-trust{
+    font-family:var(--font-mono);font-size:11.5px;color:var(--ink-soft);
+    display:flex;flex-wrap:wrap;gap:8px 20px;letter-spacing:.02em;
+    padding-bottom:56px;
+  }
+  .hero-trust span{display:inline-flex;align-items:center;gap:8px}
+  .hero-trust span::before{content:"";width:5px;height:5px;background:var(--accent);border-radius:1px}
+
+  /* ---- Сигнатурний візуал: виділення сигналу з шуму ---- */
+  .viz{
+    position:relative;
+    height:300px;
+    border:1px solid var(--line);
+    border-radius:var(--r-lg) var(--r-lg) 0 0;
+    background:var(--surface);
+    overflow:hidden;
+    box-shadow:0 -1px 0 rgba(16,19,26,.02);
+  }
+  @media (max-width:640px){ .viz{height:230px} }
+
+  .viz__noise{
+    position:absolute;inset:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='300'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.06 0 0 0 0 0.07 0 0 0 0 0.1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E");
+    opacity:.5;
+    -webkit-mask-image:linear-gradient(90deg,#000 0%,#000 26%,rgba(0,0,0,.35) 46%,transparent 58%);
+            mask-image:linear-gradient(90deg,#000 0%,#000 26%,rgba(0,0,0,.35) 46%,transparent 58%);
+    animation:noiseShift 8s steps(6) infinite;
+  }
+  .viz__grid{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:40px 40px;
+    opacity:.5;
+    -webkit-mask-image:linear-gradient(90deg,transparent 45%,#000 75%);
+            mask-image:linear-gradient(90deg,transparent 45%,#000 75%);
+  }
+  .viz__aperture{
+    position:absolute;left:56%;top:14%;bottom:14%;width:2px;
+    background:var(--accent);
+    box-shadow:0 0 26px 3px rgba(59,68,246,.45);
+  }
+  .viz__scan{
+    position:absolute;left:calc(56% - 46px);width:92px;height:2px;top:14%;
+    background:linear-gradient(90deg,transparent,var(--accent),transparent);
+    animation:scan 4.6s var(--ease) infinite;
+  }
+  .viz__signal{
+    position:absolute;right:6%;top:0;bottom:0;left:62%;
+    display:flex;flex-direction:column;justify-content:center;gap:11px;
+  }
+  .viz__bar{height:6px;border-radius:2px;background:var(--ink);transform-origin:0 50%;animation:settle 4.6s var(--ease) infinite}
+  .viz__bar:nth-child(1){width:88%;animation-delay:.1s}
+  .viz__bar:nth-child(2){width:64%;background:var(--accent);animation-delay:.24s}
+  .viz__bar:nth-child(3){width:79%;animation-delay:.38s}
+  .viz__bar:nth-child(4){width:46%;background:var(--accent);animation-delay:.52s}
+  .viz__bar:nth-child(5){width:71%;animation-delay:.66s}
+  .viz__label{
+    position:absolute;font-family:var(--font-mono);font-size:10px;
+    letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft);
+  }
+  .viz__label--noise{left:20px;bottom:16px}
+  .viz__label--signal{right:20px;bottom:16px;color:var(--accent)}
+  .viz__label--ap{left:56%;top:8px;transform:translateX(-50%);color:var(--accent)}
+
+  @keyframes scan{
+    0%,100%{top:14%;opacity:0}
+    10%{opacity:1}
+    50%{top:calc(86% - 2px);opacity:1}
+    60%{opacity:0}
+  }
+  @keyframes settle{
+    0%,8%{transform:scaleX(.2);opacity:.3}
+    22%,100%{transform:scaleX(1);opacity:1}
+  }
+  @keyframes noiseShift{to{transform:translateX(-6px)}}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+  /* ======================================================================
+     ПОТІК (hero) + ПАЙПЛАЙН (секція 03)
+     ====================================================================== */
+  .flow{
+    display:grid;grid-template-columns:1fr;gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+    border-radius:0 0 var(--r-lg) var(--r-lg);
+    overflow:hidden;
+    margin-bottom:56px;
+  }
+  @media (min-width:720px){ .flow{grid-template-columns:repeat(4,1fr)} }
+  .flow__node{
+    background:var(--surface);
+    padding:18px 18px;
+    display:flex;align-items:center;gap:12px;
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.02em;
+    color:var(--ink-mid);
+    transition:background-color .18s;
+  }
+  .flow__node:hover{background:var(--bg-tint)}
+  .flow__node .n{color:var(--accent);font-weight:600}
+  .flow__node--out{background:var(--accent);color:var(--accent-ink)}
+  .flow__node--out .n{color:rgba(255,255,255,.7)}
+  .flow__node--out:hover{background:var(--accent-press)}
+
+  .rail{
+    position:relative;
+    display:grid;grid-template-columns:1fr;gap:2px;
+    margin-bottom:22px;
+  }
+  @media (min-width:860px){ .rail{grid-template-columns:repeat(6,1fr)} }
+  .rail__step{
+    position:relative;
+    padding:20px 16px 18px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--r-sm);
+  }
+  .rail__step .k{
+    font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;
+    color:var(--accent);display:block;margin-bottom:8px;
+  }
+  .rail__step .v{font-size:13.5px;line-height:1.4;color:var(--ink-mid)}
+  @media (min-width:860px){
+    .rail::before{
+      content:"";position:absolute;top:34px;left:8%;right:8%;height:1px;
+      background:var(--line-strong);z-index:0;
+    }
+    .rail__step{z-index:1}
+  }
+
+  /* ======================================================================
+     СІТКИ / КАРТКИ
+     ====================================================================== */
+  .grid{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+  .grid-3,.grid-2{grid-template-columns:1fr}
+  @media (min-width:768px){
+    .grid-3{grid-template-columns:repeat(3,1fr)}
+    .grid-2{grid-template-columns:repeat(2,1fr)}
+  }
+  .cell{
+    background:var(--surface);
+    padding:28px 26px;
+    position:relative;
+    transition:background-color .2s;
+  }
+  .cell:hover{background:#FCFCFB}
+  .cell .num{
+    font-family:var(--font-mono);font-size:12px;color:var(--accent);
+    display:block;margin-bottom:14px;letter-spacing:.05em;
+  }
+  .cell h3{margin-bottom:9px}
+  .cell p{color:var(--ink-soft);font-size:.96em;line-height:1.55}
+  .cell::after{
+    content:"";position:absolute;right:20px;top:20px;width:6px;height:6px;
+    border-top:1.5px solid var(--accent);border-right:1.5px solid var(--accent);
+    transform:rotate(45deg) scale(.4);opacity:0;transition:opacity .2s,transform .2s var(--ease);
+  }
+  .cell:hover::after{opacity:1;transform:rotate(45deg) scale(1)}
+
+  .note{
+    font-family:var(--font-mono);font-size:12.5px;color:var(--ink-soft);
+    margin-top:20px;line-height:1.7;letter-spacing:.01em;
+    padding-left:16px;border-left:2px solid var(--line-strong);
+  }
+
+  /* Ключова теза */
+  .callout{
+    margin-top:2px;
+    background:var(--ink);
+    color:var(--footer-ink);
+    border-radius:0 0 var(--r-md) var(--r-md);
+    padding:30px 30px;
+    font-size:clamp(1.15rem,2.2vw,1.5rem);
+    font-weight:500;letter-spacing:-.02em;line-height:1.32;
+  }
+  .callout .mono{
+    display:block;font-family:var(--font-mono);font-size:10px;font-weight:500;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--footer-soft);
+    margin-bottom:14px;
+  }
+  @media (min-width:768px){ .callout{padding:40px 44px} }
+
+  .solution-wrap{border-radius:var(--r-md);overflow:hidden}
+  .solution-wrap .grid{border-radius:0;border-bottom:none}
+
+  /* ======================================================================
+     ВІДЕО
+     ====================================================================== */
+  .video{
+    position:relative;aspect-ratio:16/9;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--r-md);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+    overflow:hidden;
+  }
+  .video::before{
+    content:"";position:absolute;inset:0;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:44px 44px;opacity:.45;
+    -webkit-mask-image:radial-gradient(circle at 50% 50%,#000,transparent 72%);
+            mask-image:radial-gradient(circle at 50% 50%,#000,transparent 72%);
+  }
+  .video-play{
+    position:relative;width:62px;height:62px;border-radius:50%;
+    background:var(--accent);color:var(--accent-ink);
+    display:grid;place-items:center;
+    box-shadow:0 0 0 8px rgba(59,68,246,.12);
+    transition:transform .2s var(--ease), box-shadow .2s;
+  }
+  .video:hover .video-play{transform:scale(1.05);box-shadow:0 0 0 12px rgba(59,68,246,.14)}
+  .video-play svg{width:22px;height:22px;margin-left:3px}
+  .video-cap{position:relative;font-family:var(--font-mono);font-size:11.5px;color:var(--ink-soft);letter-spacing:.08em;text-transform:uppercase}
+
+  /* ======================================================================
+     СКРИНШОТИ
+     ====================================================================== */
+  .shots{display:grid;grid-template-columns:1fr;gap:20px}
+  @media (min-width:768px){ .shots{grid-template-columns:repeat(2,1fr)} }
+  .shot-fig{margin:0}
+  .shot{
+    border:1px solid var(--line);
+    border-radius:var(--r-md);
+    overflow:hidden;
+    background:var(--surface);
+    transition:border-color .2s;
+  }
+  .shot-fig:hover .shot{border-color:var(--line-strong)}
+  .shot-bar{
+    height:34px;border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:10px;padding-inline:14px;
+  }
+  .shot-bar i{width:7px;height:7px;border-radius:50%;background:var(--line-strong)}
+  .shot-bar span{
+    font-family:var(--font-mono);font-size:10.5px;color:var(--ink-soft);
+    letter-spacing:.03em;margin-left:6px;
+  }
+  .shot-body{
+    aspect-ratio:16/10;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink-soft);font-family:var(--font-mono);font-size:11.5px;
+    letter-spacing:.05em;
+    background-color:#FCFCFA;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:26px 26px;
+  }
+  .shot-body img{width:100%;height:100%;object-fit:cover}
+  .shot-fig figcaption{
+    font-family:var(--font-mono);font-size:11.5px;color:var(--ink-soft);
+    margin-top:12px;letter-spacing:.02em;
+  }
+  .shot-fig figcaption b{color:var(--accent);font-weight:500;margin-right:8px}
+
+  /* ======================================================================
+     СТАТУС ЗАПУСКУ — «системний readout»
+     ====================================================================== */
+  .status-panel{
+    border:1px solid var(--line-strong);
+    border-radius:var(--r-lg);
+    overflow:hidden;
+    background:var(--surface);
+  }
+  .status-top{
+    display:flex;align-items:center;gap:12px;
+    padding:16px 24px;
+    background:var(--ink);color:var(--footer-ink);
+    font-family:var(--font-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  }
+  .status-top .live{display:inline-flex;align-items:center;gap:8px;color:#fff}
+  .status-top .live::before{content:"";width:7px;height:7px;border-radius:50%;background:#4ADE80;box-shadow:0 0 0 4px rgba(74,222,128,.2);animation:pulse 2s var(--ease) infinite}
+  .status-body{padding:28px 24px}
+  @media (min-width:768px){ .status-body{padding:40px 44px} }
+  .status-body h2{margin-bottom:26px}
+  .status-body dl{border-top:1px solid var(--line)}
+  .status-body dl > div{
+    display:grid;grid-template-columns:1fr;gap:4px;
+    padding:16px 0;border-bottom:1px solid var(--line);
+  }
+  @media (min-width:640px){ .status-body dl > div{grid-template-columns:140px 1fr;gap:24px} }
+  .status-body dt{
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--accent);padding-top:3px;
+  }
+  .status-body dd{color:var(--ink-mid);font-size:.98em;line-height:1.55}
+  .status-body .btn{margin-top:28px}
+
+  /* ======================================================================
+     ФОРМА
+     ====================================================================== */
+  .form-wrap{
+    border:1px solid var(--line);
+    border-radius:var(--r-lg);
+    background:var(--surface);
+    overflow:hidden;
+    max-width:660px;
+  }
+  .form-head{
+    padding:14px 24px;border-bottom:1px solid var(--line);
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-soft);
+  }
+  form{padding:26px 22px}
+  @media (min-width:768px){ form{padding:36px 40px} }
+
+  .type-choice{margin-bottom:28px}
+  .type-choice legend{
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;
+    text-transform:uppercase;color:var(--ink-soft);margin-bottom:12px;
+  }
+  .segmented{
+    display:grid;grid-template-columns:1fr;
+    border:1px solid var(--line-strong);border-radius:var(--r-sm);overflow:hidden;
+  }
+  @media (min-width:560px){ .segmented{grid-template-columns:repeat(3,1fr)} }
+  .segmented input{position:absolute;opacity:0;width:0;height:0}
+  .segmented label{
+    padding:13px 14px;text-align:center;font-size:14px;font-weight:450;
+    cursor:pointer;border-bottom:1px solid var(--line-strong);
+    transition:background-color .15s,color .15s;
+  }
+  @media (min-width:560px){
+    .segmented label{border-bottom:none;border-right:1px solid var(--line-strong)}
+    .segmented label:last-of-type{border-right:none}
+  }
+  .segmented label:last-of-type{border-bottom:none}
+  .segmented label:hover{background:var(--bg-tint)}
+  .segmented input:checked + label{background:var(--accent);color:var(--accent-ink)}
+  .segmented input:focus-visible + label{outline:2px solid var(--accent);outline-offset:-2px}
+
+  .field{margin-bottom:18px}
+  .field label{display:flex;align-items:baseline;gap:8px;font-size:13.5px;font-weight:500;margin-bottom:7px}
+  .field .opt{color:var(--ink-soft);font-weight:400;font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase}
+  .field input,.field textarea,.field select{
+    width:100%;
+    background:var(--bg);
+    border:1px solid var(--line-strong);
+    border-radius:var(--r-sm);
+    padding:12px 14px;
+    font-size:15px;
+    transition:border-color .15s,background-color .15s,box-shadow .15s;
+  }
+  .field input:focus,.field textarea:focus,.field select:focus{
+    outline:none;border-color:var(--accent);background:var(--surface);
+    box-shadow:0 0 0 3px rgba(59,68,246,.12);
+  }
+  .field textarea{min-height:92px;resize:vertical}
+  .field input:user-invalid,.field textarea:user-invalid{border-color:#D4383B}
+
+  .cond{display:none}
+  .cond.is-active{display:block;animation:condIn .3s var(--ease)}
+  @keyframes condIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+
+  .form-foot{margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
+  .form-fine{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-top:14px;line-height:1.65;letter-spacing:.01em}
+  .form-error{color:#C13034;font-size:14px;margin-top:14px;display:none}
+
+  .form-success{display:none;padding:40px}
+  .form-success.is-active{display:block}
+  .form-success .mono{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+  .form-success h3{margin-bottom:10px;font-size:1.3rem}
+  .form-success p{color:var(--ink-soft)}
+
+  /* ======================================================================
+     ФІНАЛЬНИЙ CTA
+     ====================================================================== */
+  .final{text-align:center}
+  .final h2{margin-bottom:12px}
+  .final .lead{margin:0 auto 28px;max-width:42ch}
+
+  /* ======================================================================
+     ФУТЕР
+     ====================================================================== */
+  .site-footer{background:var(--footer-bg);color:var(--footer-ink);border-top:none;padding-block:64px}
+  .site-footer .container{display:grid;gap:40px}
+  .footer-motto{
+    font-size:clamp(1.4rem,3vw,2rem);font-weight:500;letter-spacing:-.03em;
+    line-height:1.25;max-width:20ch;
+  }
+  .footer-cols{display:grid;grid-template-columns:1fr;gap:28px}
+  @media (min-width:640px){ .footer-cols{grid-template-columns:1fr auto;align-items:end} }
+  .footer-nav{display:flex;flex-wrap:wrap;gap:8px 20px}
+  .footer-nav a{font-family:var(--font-mono);font-size:12px;color:var(--footer-soft);letter-spacing:.03em}
+  .footer-nav a:hover{color:#fff}
+  .footer-meta{font-family:var(--font-mono);font-size:11px;color:var(--footer-soft);line-height:1.8;letter-spacing:.02em}
+  .footer-meta .wordmark{color:#fff;margin-bottom:6px}
+  .footer-meta .wordmark i{border-color:var(--accent)}
+
+  /* ======================================================================
+     SCROLL REVEAL
+     ====================================================================== */
+  .js .reveal{opacity:0;transform:translateY(12px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .js .reveal.is-visible{opacity:1;transform:none}
+
+  @media (prefers-reduced-motion:reduce){
+    html.js{scroll-behavior:auto}
+    .js .reveal{opacity:1;transform:none;transition:none}
+    .viz__scan,.viz__bar,.viz__noise,.announce .dot,.status-top .live::before{animation:none}
+    .viz__bar{transform:none;opacity:1}
+    .viz__scan{opacity:0}
+    .btn:hover,.btn:hover svg,.link-mono:hover svg,.wordmark:hover i{transform:none}
+  }
+</style>
+</head>
+<body>
+
+<div class="scroll-progress" aria-hidden="true"></div>
+
+<!-- АНОНС ─ редагується цей рядок -->
+<div class="announce">
+  <span class="dot" aria-hidden="true"></span>Публічна beta — відкриваємо доступ першим користувачам.
+  <a href="#form">Залишити заявку →</a>
+</div>
+
+<header class="site-header">
+  <div class="container">
+    <!-- [Назва] -->
+    <a href="#" class="wordmark"><i aria-hidden="true"></i>[Назва]</a>
+    <nav class="nav" aria-label="Розділи">
+      <a href="#problem">проблема</a>
+      <a href="#how">як&nbsp;працює</a>
+      <a href="#audience">для&nbsp;кого</a>
+      <a href="#status">beta</a>
+    </nav>
+    <a href="#form" class="btn btn-primary">Отримати beta-доступ</a>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================ HERO ============================ -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero__inner">
+      <span class="eyebrow reveal"><b>[</b>&nbsp;Система моніторингу професійної інформації&nbsp;<b>]</b></span>
+      <h1 id="hero-title" class="reveal">Ви визначаєте, що важливо. Система стежить за цим <em>замість вас</em>.</h1>
+      <p class="lead reveal">Задайте теми, підключіть джерела — і отримуйте лише релевантні матеріали. Без ручного перегляду десятків каналів, сайтів і медіа щодня.</p>
+      <div class="hero-cta reveal">
+        <a href="#form" class="btn btn-primary btn-lg">Отримати beta-доступ
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#video" class="btn btn-secondary btn-lg">Подивитись, як це працює</a>
+      </div>
+      <div class="hero-trust reveal">
+        <span>Робочий продукт</span>
+        <span>Публічна beta</span>
+        <span>Підключення за участю команди на час тестування</span>
+      </div>
+    </div>
+
+    <div class="hero__inner">
+      <div class="viz reveal" role="img" aria-label="Схема: система виділяє релевантний сигнал із загального інформаційного шуму">
+        <div class="viz__noise" aria-hidden="true"></div>
+        <div class="viz__grid" aria-hidden="true"></div>
+        <div class="viz__scan" aria-hidden="true"></div>
+        <div class="viz__aperture" aria-hidden="true"></div>
+        <div class="viz__signal" aria-hidden="true">
+          <div class="viz__bar"></div><div class="viz__bar"></div><div class="viz__bar"></div><div class="viz__bar"></div><div class="viz__bar"></div>
+        </div>
+        <span class="viz__label viz__label--noise" aria-hidden="true">Шум</span>
+        <span class="viz__label viz__label--ap" aria-hidden="true">Фільтр за темами</span>
+        <span class="viz__label viz__label--signal" aria-hidden="true">Сигнал</span>
+      </div>
+
+      <div class="flow reveal" aria-label="Принцип роботи: джерела, фільтр за темами, AI-обробка, результат для вас">
+        <div class="flow__node"><span class="n">01</span> Джерела</div>
+        <div class="flow__node"><span class="n">02</span> Фільтр за темами</div>
+        <div class="flow__node"><span class="n">03</span> AI-обробка</div>
+        <div class="flow__node flow__node--out"><span class="n">04</span> Ви</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================== 01 · ПРОБЛЕМА ========================== -->
+  <section id="problem" aria-labelledby="problem-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><b>01</b> Проблема</span>
+        <h2 id="problem-title">Інформації забагато, часу — обмаль</h2>
+        <p class="lead">Щоб залишатися в курсі, доводиться вручну переглядати десятки Telegram-каналів, сайтів і розсилок. Більшість матеріалів не потрібні, важливе легко пропустити, а сам моніторинг забирає години щотижня.</p>
+      </div>
+      <div class="grid grid-3 reveal" data-stagger>
+        <div class="cell"><span class="num">01</span><h3>Забагато джерел</h3><p>Потрібне розкидане по каналах, сайтах, чатах і розсилках.</p></div>
+        <div class="cell"><span class="num">02</span><h3>Забагато шуму</h3><p>Корисні матеріали губляться серед реклами, повторів і випадкових новин.</p></div>
+        <div class="cell"><span class="num">03</span><h3>Забагато ручної роботи</h3><p>Регулярний перегляд джерел не масштабується і з'їдає час.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================== 02 · РІШЕННЯ =========================== -->
+  <section id="solution" aria-labelledby="solution-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><b>02</b> Рішення</span>
+        <h2 id="solution-title">Інформаційний потік, налаштований під вас</h2>
+        <p class="lead">Ви один раз визначаєте, що для вас важливо. Далі система робить решту.</p>
+      </div>
+      <div class="solution-wrap reveal">
+        <div class="grid grid-2" data-stagger>
+          <div class="cell"><span class="num">01</span><h3>Ви задаєте теми</h3><p>Формулюєте, що саме хочете відстежувати.</p></div>
+          <div class="cell"><span class="num">02</span><h3>Підключаєте джерела</h3><p>Канали й медіа, за якими треба стежити.</p></div>
+          <div class="cell"><span class="num">03</span><h3>Система фільтрує та обробляє</h3><p>Збирає матеріали, визначає релевантність, прибирає зайве.</p></div>
+          <div class="cell"><span class="num">04</span><h3>Ви отримуєте результат</h3><p>Тільки те, що відповідає вашому запиту — коротко й по суті.</p></div>
+        </div>
+        <p class="callout">
+          <span class="mono">Ключова ідея</span>
+          Не ви підлаштовуєтесь під готовий інформаційний потік — потік підлаштовується під вас або вашу команду.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==================== 03 · ЯК ПРАЦЮЄ ЗАРАЗ (BETA) ================== -->
+  <section id="how" aria-labelledby="how-title">
+    <div class="container">
+      <div class="section-head wide reveal">
+        <span class="eyebrow"><b>03</b> Поточна beta-версія</span>
+        <h2 id="how-title">Що система вміє вже зараз</h2>
+        <p class="lead">Показуємо реальний поточний стан — без функцій, яких ще немає.</p>
+      </div>
+
+      <div class="rail reveal" data-stagger aria-label="Поточний процес: Telegram-джерела, збір публікацій, фільтрація за темами, AI-обробка, короткий результат, доставка в Telegram">
+        <div class="rail__step"><span class="k">01</span><span class="v">Telegram-джерела</span></div>
+        <div class="rail__step"><span class="k">02</span><span class="v">Збір публікацій</span></div>
+        <div class="rail__step"><span class="k">03</span><span class="v">Фільтрація за вашими темами</span></div>
+        <div class="rail__step"><span class="k">04</span><span class="v">AI-обробка</span></div>
+        <div class="rail__step"><span class="k">05</span><span class="v">Короткий результат</span></div>
+        <div class="rail__step"><span class="k">06</span><span class="v">Доставка в Telegram</span></div>
+      </div>
+      <p class="note reveal">На час beta підключення джерел і тем відбувається за участю нашої команди. Далі це стане повністю самостійним у інтерфейсі.</p>
+    </div>
+  </section>
+
+  <!-- =========================== 04 · ВІДЕО =========================== -->
+  <section id="video" aria-labelledby="video-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><b>04</b> Демо</span>
+        <h2 id="video-title">Подивіться, як це працює</h2>
+        <p class="lead">Коротке відео: створення теми → робота системи → відібрана інформація → результат.</p>
+      </div>
+      <!-- ВІДЕО: замінити цей блок на <video controls poster="assets/video-poster.jpg"> … </video> або <iframe> -->
+      <div class="video reveal" role="img" aria-label="Місце для презентаційного відео, приблизно 20 секунд">
+        <span class="video-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+        <span class="video-cap">Відео ~20 секунд</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== 05 · СКРИНШОТИ ========================== -->
+  <section id="screens" aria-labelledby="screens-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><b>05</b> Інтерфейс</span>
+        <h2 id="screens-title">Реальний продукт, не концепт</h2>
+        <p class="lead">Кілька екранів поточної beta-версії.</p>
+      </div>
+      <div class="shots reveal" data-stagger>
+        <figure class="shot-fig">
+          <div class="shot">
+            <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>[Назва] / теми / нова</span></div>
+            <!-- СКРИНШОТ 1: <img src="assets/screen-1.png" alt="Створення теми моніторингу" width="1600" height="1000" loading="lazy"> -->
+            <div class="shot-body">screen-1.png · 1600×1000</div>
+          </div>
+          <figcaption><b>01</b>Створення теми моніторингу</figcaption>
+        </figure>
+        <figure class="shot-fig">
+          <div class="shot">
+            <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>[Назва] / стрічка</span></div>
+            <!-- СКРИНШОТ 2: <img src="assets/screen-2.png" alt="Стрічка відібраних матеріалів" width="1600" height="1000" loading="lazy"> -->
+            <div class="shot-body">screen-2.png · 1600×1000</div>
+          </div>
+          <figcaption><b>02</b>Стрічка відібраних матеріалів</figcaption>
+        </figure>
+        <figure class="shot-fig">
+          <div class="shot">
+            <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>[Назва] / матеріал</span></div>
+            <!-- СКРИНШОТ 3: <img src="assets/screen-3.png" alt="Картка матеріалу з коротким викладом" width="1600" height="1000" loading="lazy"> -->
+            <div class="shot-body">screen-3.png · 1600×1000</div>
+          </div>
+          <figcaption><b>03</b>Картка матеріалу з коротким викладом</figcaption>
+        </figure>
+        <figure class="shot-fig">
+          <div class="shot">
+            <div class="shot-bar" aria-hidden="true"><i></i><i></i><i></i><span>[Назва] / джерела</span></div>
+            <!-- СКРИНШОТ 4: <img src="assets/screen-4.png" alt="Підключені джерела" width="1600" height="1000" loading="lazy"> -->
+            <div class="shot-body">screen-4.png · 1600×1000</div>
+          </div>
+          <figcaption><b>04</b>Підключені джерела</figcaption>
+        </figure>
+      </div>
+      <p class="note reveal">Зображення з робочої beta-версії. Інтерфейс продовжує вдосконалюватися.</p>
+    </div>
+  </section>
+
+  <!-- ========================== 06 · ДЛЯ КОГО ========================= -->
+  <section id="audience" aria-labelledby="audience-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><b>06</b> Сценарії</span>
+        <h2 id="audience-title">Для приватних користувачів, спеціалістів і команд</h2>
+      </div>
+      <div class="grid grid-3 reveal" data-stagger>
+        <div class="cell">
+          <span class="num">A</span>
+          <h3>Приватний користувач</h3>
+          <p>Власні інтереси, навчання, інвестиції, свій бізнес, персональні інформаційні задачі.</p>
+        </div>
+        <div class="cell">
+          <span class="num">B</span>
+          <h3>Спеціаліст</h3>
+          <p>Постійний моніторинг своєї професійної сфери: важливі події та зміни, галузеві новини, професійні матеріали. Залишайтеся в контексті без постійного ручного перегляду джерел.</p>
+        </div>
+        <div class="cell">
+          <span class="num">C</span>
+          <h3>Компанія / команда</h3>
+          <p>Конкуренти, ринок, законодавчі зміни, маркетинг, HR, технології та інші корпоративні напрями.</p>
+        </div>
+      </div>
+      <p class="note reveal">Це приклади, а не обмежений перелік. Систему можна налаштувати під будь-яку тему, за якою існують публічні джерела.</p>
+    </div>
+  </section>
+
+  <!-- ========================== 07 · БАЧЕННЯ ========================== -->
+  <section id="vision" aria-labelledby="vision-title">
+    <div class="container">
+      <div class="section-head wide reveal">
+        <span class="eyebrow"><b>07</b> Бачення</span>
+        <h2 id="vision-title">Поточна версія — перший крок</h2>
+        <p class="lead">Ми будуємо не тематичний дайджест і не окремий Telegram-бот. Мета — універсальна система персонального, професійного та корпоративного моніторингу інформації, що працює під конкретні завдання кожного користувача. Поточна beta — фундамент цієї системи.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 08 · СТАТУС ЗАПУСКУ ======================= -->
+  <section id="status" aria-labelledby="status-title">
+    <div class="container">
+      <!-- СТАТУС ЗАПУСКУ: увесь блок вільно редагується без дотику до решти сайту -->
+      <div class="status-panel reveal">
+        <div class="status-top">
+          <span class="live">beta</span>
+          <span>статус запуску</span>
+        </div>
+        <div class="status-body">
+          <h2 id="status-title">Ми у публічній beta</h2>
+          <dl>
+            <div>
+              <dt>Статус</dt>
+              <dd>Продукт працює і зараз готується до відкритого beta-тестування.</dd>
+            </div>
+            <div>
+              <dt>Що зараз</dt>
+              <dd>Набираємо перших користувачів для підключення. Доступ відкриваємо поступово.</dd>
+            </div>
+            <div>
+              <dt>Чесно</dt>
+              <dd>Система продовжує вдосконалюватися — насамперед щодо якості та стабільності фільтрації. Це робочий продукт, а не прототип: він уже виконує свою основну задачу.</dd>
+            </div>
+          </dl>
+          <a href="#form" class="btn btn-primary btn-lg">Залишити заявку на підключення
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================== 09 · ФОРМА =========================== -->
+  <section id="form" aria-labelledby="form-title">
+    <div class="container">
+      <div class="section-head reveal">
+        <span class="eyebrow"><b>09</b> Заявка</span>
+        <h2 id="form-title">Залишити заявку на beta-доступ</h2>
+        <p class="lead">Кілька полів — щоб зрозуміти ваш сценарій і відкрити доступ.</p>
+      </div>
+
+      <div class="form-wrap reveal">
+        <div class="form-head">заявка на підключення</div>
+        <!--
+          ФОРМА: щоб приймати заявки, задайте endpoint у data-endpoint нижче.
+            • Formspree:   data-endpoint="https://formspree.io/f/XXXXXXXX"
+            • Getform:     data-endpoint="https://getform.io/f/XXXXXXXX"
+            • Власний API: data-endpoint="/api/leads"
+          Порожній data-endpoint = демо-режим (показує екран «дякуємо» без відправки).
+        -->
+        <form id="lead-form" data-endpoint="" novalidate>
+
+          <fieldset class="type-choice">
+            <legend>Для кого підключення?</legend>
+            <div class="segmented">
+              <input type="radio" name="user_type" id="ut-self" value="Для себе" required>
+              <label for="ut-self">Для себе</label>
+              <input type="radio" name="user_type" id="ut-spec" value="Я спеціаліст">
+              <label for="ut-spec">Я спеціаліст</label>
+              <input type="radio" name="user_type" id="ut-comp" value="Для компанії">
+              <label for="ut-comp">Для компанії</label>
+            </div>
+          </fieldset>
+
+          <div class="field">
+            <label for="f-name">Ім'я</label>
+            <input type="text" id="f-name" name="name" autocomplete="name" required>
+          </div>
+
+          <div class="field">
+            <label for="f-contact">Пошта або Telegram</label>
+            <input type="text" id="f-contact" name="contact" placeholder="you@email.com або @username" required>
+          </div>
+
+          <div class="field">
+            <label for="f-topics">Що хочете відстежувати?</label>
+            <textarea id="f-topics" name="topics" placeholder="Теми, ринки, напрями, ключові питання…" required></textarea>
+          </div>
+
+          <!-- ── Для себе ─────────────────────────────── -->
+          <div class="cond" data-when="Для себе">
+            <div class="field">
+              <label for="f-self-area">Сфера інтересу <span class="opt">необов'язково</span></label>
+              <input type="text" id="f-self-area" name="self_area" disabled>
+            </div>
+            <div class="field">
+              <label for="f-self-sources">Які джерела моніторите зараз? <span class="opt">необов'язково</span></label>
+              <textarea id="f-self-sources" name="self_sources" disabled></textarea>
+            </div>
+          </div>
+
+          <!-- ── Я спеціаліст ─────────────────────────── -->
+          <div class="cond" data-when="Я спеціаліст">
+            <div class="field">
+              <label for="f-spec-prof">Професія / сфера <span class="opt">необов'язково</span></label>
+              <input type="text" id="f-spec-prof" name="spec_profession" disabled>
+            </div>
+            <div class="field">
+              <label for="f-spec-sources">Які джерела моніторите зараз? <span class="opt">необов'язково</span></label>
+              <textarea id="f-spec-sources" name="spec_sources" disabled></textarea>
+            </div>
+          </div>
+
+          <!-- ── Для компанії ─────────────────────────── -->
+          <div class="cond" data-when="Для компанії">
+            <div class="field">
+              <label for="f-co-name">Компанія <span class="opt">необов'язково</span></label>
+              <input type="text" id="f-co-name" name="company" autocomplete="organization" disabled>
+            </div>
+            <div class="field">
+              <label for="f-co-role">Посада / роль <span class="opt">необов'язково</span></label>
+              <input type="text" id="f-co-role" name="company_role" disabled>
+            </div>
+            <div class="field">
+              <label for="f-co-areas">Напрями моніторингу <span class="opt">необов'язково</span></label>
+              <textarea id="f-co-areas" name="company_areas" disabled></textarea>
+            </div>
+            <div class="field">
+              <label for="f-co-size">Приблизна кількість користувачів <span class="opt">необов'язково</span></label>
+              <select id="f-co-size" name="company_users" disabled>
+                <option value="">—</option>
+                <option>1–3</option>
+                <option>4–10</option>
+                <option>11–50</option>
+                <option>50+</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="f-co-who">Хто користуватиметься системою <span class="opt">необов'язково</span></label>
+              <input type="text" id="f-co-who" name="company_who" disabled>
+            </div>
+          </div>
+
+          <div class="form-foot">
+            <button type="submit" class="btn btn-primary btn-lg">Надіслати заявку
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+            </button>
+            <p class="form-fine">Відповімо на вказаний контакт. Дані використовуємо лише для підключення до beta.</p>
+            <p class="form-error" id="form-error">Не вдалося надіслати. Спробуйте ще раз або напишіть на <!-- КОНТАКТ -->[email / Telegram].</p>
+          </div>
+        </form>
+
+        <div class="form-success" id="form-success" role="status">
+          <p class="mono">Заявку прийнято</p>
+          <h3>Дякуємо! Заявку отримано.</h3>
+          <p>Ми зв'яжемося з вами найближчим часом на вказаний контакт.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== ФІНАЛЬНИЙ CTA ======================== -->
+  <section class="final" aria-labelledby="final-title">
+    <div class="container">
+      <h2 id="final-title" class="reveal">Готові спробувати?</h2>
+      <p class="lead reveal">Приєднуйтесь до перших користувачів beta.</p>
+      <a href="#form" class="btn btn-primary btn-lg reveal">Отримати beta-доступ
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <p class="footer-motto">Потрібна інформація має знаходити вас сама — а не навпаки.</p>
+    <div class="footer-cols">
+      <nav class="footer-nav" aria-label="Розділи">
+        <a href="#problem">проблема</a>
+        <a href="#how">як працює</a>
+        <a href="#audience">для кого</a>
+        <a href="#status">beta</a>
+        <a href="#form">заявка</a>
+      </nav>
+      <div class="footer-meta">
+        <!-- [Назва] -->
+        <a href="#" class="wordmark"><i aria-hidden="true"></i>[Назва]</a>
+        <!-- КОНТАКТ -->
+        <div>[email або Telegram]</div>
+        <div>© 2026 [Назва]</div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- АНАЛІТИКА: за потреби вставте сюди сніпет Plausible / Google Analytics -->
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- Scroll progress ---- */
+  var bar = document.querySelector(".scroll-progress");
+  if (bar) {
+    var tick = function () {
+      var d = document.documentElement;
+      var max = d.scrollHeight - d.clientHeight;
+      bar.style.transform = "scaleX(" + (max > 0 ? d.scrollTop / max : 0) + ")";
+    };
+    addEventListener("scroll", tick, { passive: true });
+    tick();
+  }
+
+  /* ---- Staggered reveal ---- */
+  if (!reduce) {
+    document.querySelectorAll("[data-stagger]").forEach(function (group) {
+      group.querySelectorAll(".reveal, .cell, .rail__step, .shot-fig").forEach(function (el, i) {
+        el.style.transitionDelay = (i * 55) + "ms";
+      });
+    });
+  }
+
+  /* ---- Scroll reveal ---- */
+  var revealEls = document.querySelectorAll(".reveal");
+  if ("IntersectionObserver" in window && revealEls.length) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("is-visible"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0.04 });
+    revealEls.forEach(function (el) { io.observe(el); });
+  } else {
+    revealEls.forEach(function (el) { el.classList.add("is-visible"); });
+  }
+
+  /* ---- Adaptive form ---- */
+  var form = document.getElementById("lead-form");
+  if (!form) return;
+
+  var conds = form.querySelectorAll(".cond");
+  var radios = form.querySelectorAll('input[name="user_type"]');
+  var errorEl = document.getElementById("form-error");
+  var successEl = document.getElementById("form-success");
+
+  function setGroup(group, on) {
+    group.classList.toggle("is-active", on);
+    group.querySelectorAll("input, textarea, select").forEach(function (f) { f.disabled = !on; });
+  }
+  function syncConds() {
+    var checked = form.querySelector('input[name="user_type"]:checked');
+    var val = checked ? checked.value : null;
+    conds.forEach(function (g) { setGroup(g, g.getAttribute("data-when") === val); });
+  }
+  radios.forEach(function (r) { r.addEventListener("change", syncConds); });
+  syncConds();
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    errorEl.style.display = "none";
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    var endpoint = (form.getAttribute("data-endpoint") || "").trim();
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    function showSuccess() {
+      form.style.display = "none";
+      successEl.classList.add("is-active");
+      successEl.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+    }
+    if (!endpoint) { showSuccess(); return; }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Надсилаємо…";
+    fetch(endpoint, { method: "POST", body: new FormData(form), headers: { "Accept": "application/json" } })
+      .then(function (res) { if (res.ok) { showSuccess(); } else { throw new Error(); } })
+      .catch(function () {
+        errorEl.style.display = "block";
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Надіслати заявку";
+      });
+  });
+})();
+</script>
+
+</body>
+</html>
