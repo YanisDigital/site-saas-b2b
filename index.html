@@ -17,6 +17,15 @@
    7. Маркер "КОНТАКТ" — email або Telegram у футері та в помилці форми
    8. Зображення assets/og-image.png, assets/favicon.svg
    9. Маркер "АНАЛІТИКА" — сніпет Plausible / GA (необов'язково)
+  10. Маркер "ДЕМО-ПРИМІТКА" у футері — видалити при реальному запуску
+  ----------------------------------------------------------------------------
+  ДЕМО-РЕЖИМ (поточний стан)
+  Поки data-endpoint порожній, сайт працює як демонстраційний і НЕ вдає,
+  що приймає заявки: у формі показується попередження, підпис під кнопкою
+  замінюється, а після відправки з'являється панель «Форма ще не підключена».
+  Жодного мережевого запиту не відбувається, дані не зберігаються.
+  Досить задати data-endpoint — і форма автоматично переходить у робочий
+  режим із нормальним екраном підтвердження.
   ============================================================================
 -->
 <html lang="uk">
@@ -63,6 +72,11 @@
     --footer-bg:#10131A;
     --footer-ink:#F2F2EE;
     --footer-soft:#8B909C;
+
+    /* Системне повідомлення (демо-режим) */
+    --notice-bg:#FDF6E4;
+    --notice-line:#E7D6A8;
+    --notice-ink:#6B5518;
 
     --r-sm:8px;
     --r-md:12px;
@@ -625,6 +639,29 @@
   .form-success h3{margin-bottom:10px;font-size:1.3rem}
   .form-success p{color:var(--ink-soft)}
 
+  /* ---- Демо-режим: форма не підключена ---- */
+  .form-notice{
+    display:none;
+    background:var(--notice-bg);
+    border-bottom:1px solid var(--notice-line);
+    color:var(--notice-ink);
+    font-family:var(--font-mono);font-size:11.5px;line-height:1.6;letter-spacing:.01em;
+    padding:13px 24px;
+  }
+  .is-demo .form-notice{display:block}
+  .form-notice b{font-weight:600;letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:3px}
+
+  .form-demo{display:none;padding:40px}
+  .form-demo.is-active{display:block}
+  .form-demo .mono{
+    font-family:var(--font-mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--notice-ink);margin-bottom:14px;
+    display:inline-flex;align-items:center;gap:9px;
+  }
+  .form-demo .mono::before{content:"";width:8px;height:8px;border-radius:2px;background:var(--notice-line)}
+  .form-demo h3{margin-bottom:10px;font-size:1.3rem}
+  .form-demo p{color:var(--ink-soft);margin-bottom:22px}
+
   /* ======================================================================
      ФІНАЛЬНИЙ CTA
      ====================================================================== */
@@ -649,6 +686,12 @@
   .footer-meta{font-family:var(--font-mono);font-size:11px;color:var(--footer-soft);line-height:1.8;letter-spacing:.02em}
   .footer-meta .wordmark{color:#fff;margin-bottom:6px}
   .footer-meta .wordmark i{border-color:var(--accent)}
+  .footer-demo{
+    font-family:var(--font-mono);font-size:11px;line-height:1.7;letter-spacing:.02em;
+    color:var(--footer-soft);
+    border-top:1px solid rgba(242,242,238,.14);
+    padding-top:22px;max-width:66ch;
+  }
 
   /* ======================================================================
      SCROLL REVEAL
@@ -939,12 +982,20 @@
 
       <div class="form-wrap reveal">
         <div class="form-head">заявка на підключення</div>
+
+        <!-- Показується автоматично, доки data-endpoint порожній. Видаляти не потрібно. -->
+        <p class="form-notice">
+          <b>Демонстраційний проєкт</b>
+          Форма не підключена до бекенду. Введені дані нікуди не надсилаються і ніде не зберігаються.
+        </p>
+
         <!--
           ФОРМА: щоб приймати заявки, задайте endpoint у data-endpoint нижче.
             • Formspree:   data-endpoint="https://formspree.io/f/XXXXXXXX"
             • Getform:     data-endpoint="https://getform.io/f/XXXXXXXX"
             • Власний API: data-endpoint="/api/leads"
-          Порожній data-endpoint = демо-режим (показує екран «дякуємо» без відправки).
+          Порожній data-endpoint = демо-режим: сайт чесно повідомляє, що форма
+          не підключена, і НЕ показує екран «заявку отримано».
         -->
         <form id="lead-form" data-endpoint="" novalidate>
 
@@ -1033,8 +1084,8 @@
             <button type="submit" class="btn btn-primary btn-lg">Надіслати заявку
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
-            <p class="form-fine">Відповімо на вказаний контакт. Дані використовуємо лише для підключення до beta.</p>
-            <p class="form-error" id="form-error">Не вдалося надіслати. Спробуйте ще раз або напишіть на <!-- КОНТАКТ -->[email / Telegram].</p>
+            <p class="form-fine" id="form-fine">Відповімо на вказаний контакт. Дані використовуємо лише для підключення до beta.</p>
+            <p class="form-error" id="form-error">Не вдалося надіслати. Спробуйте ще раз або напишіть на <!-- КОНТАКТ -->[контакт].</p>
           </div>
         </form>
 
@@ -1042,6 +1093,13 @@
           <p class="mono">Заявку прийнято</p>
           <h3>Дякуємо! Заявку отримано.</h3>
           <p>Ми зв'яжемося з вами найближчим часом на вказаний контакт.</p>
+        </div>
+
+        <div class="form-demo" id="form-demo" role="status">
+          <p class="mono">Демо-режим</p>
+          <h3>Форма ще не підключена</h3>
+          <p>Це демонстраційний проєкт із портфоліо. Ваші дані нікуди не надіслані й не збережені — заявки поки не приймаються. У робочій версії форма надсилає заявку на підключений endpoint.</p>
+          <button type="button" class="btn btn-secondary" id="form-back">Повернутись до форми</button>
         </div>
       </div>
     </div>
@@ -1074,11 +1132,17 @@
       <div class="footer-meta">
         <!-- [Назва] -->
         <a href="#" class="wordmark"><i aria-hidden="true"></i>[Назва]</a>
-        <!-- КОНТАКТ -->
-        <div>[email або Telegram]</div>
+        <!-- КОНТАКТ: підставити реальний email або Telegram перед запуском -->
+        <div>[контакт — заповнюється перед запуском]</div>
         <div>© 2026 [Назва]</div>
       </div>
     </div>
+
+    <!-- ДЕМО-ПРИМІТКА: видалити разом із підключенням форми при реальному запуску -->
+    <p class="footer-demo">
+      Демонстраційний проєкт із портфоліо. Назва, контакти, скриншоти та відео —
+      умовні; форма заявки не підключена й даних не збирає.
+    </p>
   </div>
 </footer>
 
@@ -1131,6 +1195,18 @@
   var radios = form.querySelectorAll('input[name="user_type"]');
   var errorEl = document.getElementById("form-error");
   var successEl = document.getElementById("form-success");
+  var demoEl = document.getElementById("form-demo");
+  var fineEl = document.getElementById("form-fine");
+  var wrap = form.closest(".form-wrap");
+  var endpoint = (form.getAttribute("data-endpoint") || "").trim();
+
+  /* Демо-режим: endpoint не заданий. Нічого не надсилаємо і не вдаємо,
+     що заявку прийнято — просто чесно про це повідомляємо. */
+  var isDemo = !endpoint;
+  if (isDemo) {
+    wrap.classList.add("is-demo");
+    fineEl.textContent = "Демо-режим: дані не надсилаються і не зберігаються.";
+  }
 
   function setGroup(group, on) {
     group.classList.toggle("is-active", on);
@@ -1144,20 +1220,32 @@
   radios.forEach(function (r) { r.addEventListener("change", syncConds); });
   syncConds();
 
+  function showPanel(el) {
+    form.style.display = "none";
+    el.classList.add("is-active");
+    el.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+  }
+
+  /* «Повернутись до форми» — доступно лише в демо-режимі, бо нічого не сталося */
+  var backBtn = document.getElementById("form-back");
+  if (backBtn) {
+    backBtn.addEventListener("click", function () {
+      demoEl.classList.remove("is-active");
+      form.style.display = "";
+      form.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
+    });
+  }
+
   form.addEventListener("submit", function (ev) {
     ev.preventDefault();
     errorEl.style.display = "none";
     if (!form.checkValidity()) { form.reportValidity(); return; }
 
-    var endpoint = (form.getAttribute("data-endpoint") || "").trim();
-    var submitBtn = form.querySelector('button[type="submit"]');
+    /* Демо: жодного запиту, жодного «дякуємо» — чесне пояснення */
+    if (isDemo) { showPanel(demoEl); return; }
 
-    function showSuccess() {
-      form.style.display = "none";
-      successEl.classList.add("is-active");
-      successEl.scrollIntoView({ block: "center", behavior: reduce ? "auto" : "smooth" });
-    }
-    if (!endpoint) { showSuccess(); return; }
+    var submitBtn = form.querySelector('button[type="submit"]');
+    function showSuccess() { showPanel(successEl); }
 
     submitBtn.disabled = true;
     submitBtn.textContent = "Надсилаємо…";
