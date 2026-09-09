@@ -3,11 +3,21 @@
 Односторінковий лендинг для публічного beta-запуску SaaS-продукту —
 системи персонального та корпоративного моніторингу професійної інформації.
 
+[![Deploy](https://github.com/YanisDigital/site-saas-b2b/actions/workflows/pages/pages-build-deployment/badge.svg)](https://github.com/YanisDigital/site-saas-b2b/deployments)
+![Build: none](https://img.shields.io/badge/build-none-2ea44f)
+![HTML5](https://img.shields.io/badge/HTML5-hand--written-e34f26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-vanilla-1572b6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-zero%20deps-f7df1e?logo=javascript&logoColor=black)
+![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-live-222?logo=github&logoColor=white)
+![Fonts: OFL 1.1](https://img.shields.io/badge/fonts-OFL%201.1-informational)
+
 **Демо:** https://yanisdigital.github.io/site-saas-b2b/
 · [політика приватності](https://yanisdigital.github.io/site-saas-b2b/privacy.html)
 
 > Портфоліо-приклад. Назва, контакти, скриншоти й відео — умовні
 > плейсхолдери; форма заявки працює в демо-режимі й даних не збирає.
+
+![Головний екран лендингу](assets/screenshot.png)
 
 ---
 
@@ -41,6 +51,7 @@ landing-spec.md        специфікація: структура, усі те
 assets/
   favicon.svg
   og-image.png         1200×630, згенерована (scripts/og-generator.html)
+  screenshot.png       для README (headless-знімок hero)
   fonts/               IBM Plex Sans/Mono woff2 + OFL.txt
 scripts/
   fetch-fonts.py       перезавантажує підмножини IBM Plex, генерує @font-face
