@@ -18,6 +18,12 @@
    8. Зображення assets/og-image.png, assets/favicon.svg
    9. Маркер "АНАЛІТИКА" — сніпет Plausible / GA (необов'язково)
   10. Маркер "ДЕМО-ПРИМІТКА" у футері — видалити при реальному запуску
+  11. privacy.html — заповнити всі [плейсхолдери] (контролер, строк, орган)
+  ----------------------------------------------------------------------------
+  ЗАХИСТ ФОРМИ ВІД БОТІВ
+  Honeypot-поле _gotcha (приховане, не display:none) + перевірка часу
+  заповнення (<2.5 с = бот). При спрацюванні форма показує «успіх», але
+  НЕ робить запиту. Formspree обробляє _gotcha ще й на своєму боці.
   ----------------------------------------------------------------------------
   ДЕМО-РЕЖИМ (поточний стан)
   Поки data-endpoint порожній, сайт працює як демонстраційний і НЕ вдає,
@@ -602,6 +608,7 @@
      ФОРМА
      ====================================================================== */
   .form-wrap{
+    position:relative;
     border:1px solid var(--line);
     border-radius:var(--r-lg);
     background:var(--surface);
@@ -666,7 +673,14 @@
 
   .form-foot{margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
   .form-fine{font-family:var(--font-mono);font-size:11px;color:var(--ink-soft);margin-top:14px;line-height:1.65;letter-spacing:.01em}
+  .form-fine a{color:var(--accent);text-underline-offset:2px}
   .form-error{color:#C13034;font-size:14px;margin-top:14px;display:none}
+
+  /* Honeypot — прихований від людей, видимий для ботів. Не display:none.
+     Абсолютне позиціонування всередині .form-wrap (position:relative +
+     overflow:hidden) — не створює горизонтального скролу сторінки. */
+  .hp{position:absolute;left:-9999px;top:0;width:1px;height:1px;overflow:hidden}
+  .hp input{width:100%}
 
   .form-success{display:none;padding:40px}
   .form-success.is-active{display:block}
@@ -1034,6 +1048,14 @@
         -->
         <form id="lead-form" data-endpoint="" novalidate>
 
+          <!-- Захист від ботів: honeypot + перевірка часу заповнення (див. скрипт).
+               Поле _gotcha також обробляється на боці Formspree автоматично. -->
+          <div class="hp" aria-hidden="true">
+            <label>Залиште це поле порожнім
+              <input type="text" name="_gotcha" tabindex="-1" autocomplete="off">
+            </label>
+          </div>
+
           <fieldset class="type-choice">
             <legend>Для кого підключення?</legend>
             <div class="segmented">
@@ -1119,7 +1141,7 @@
             <button type="submit" class="btn btn-primary btn-lg">Надіслати заявку
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
             </button>
-            <p class="form-fine" id="form-fine">Відповімо на вказаний контакт. Дані використовуємо лише для підключення до beta.</p>
+            <p class="form-fine" id="form-fine">Відповімо на вказаний контакт. Дані використовуємо лише для підключення до beta — <a href="privacy.html">політика приватності</a>.</p>
             <p class="form-error" id="form-error">Не вдалося надіслати. Спробуйте ще раз або напишіть на <!-- КОНТАКТ -->[контакт].</p>
           </div>
         </form>
@@ -1163,6 +1185,7 @@
         <a href="#audience">для кого</a>
         <a href="#status">beta</a>
         <a href="#form">заявка</a>
+        <a href="privacy.html">приватність</a>
       </nav>
       <div class="footer-meta">
         <!-- [Назва] -->
@@ -1235,12 +1258,23 @@
   var wrap = form.closest(".form-wrap");
   var endpoint = (form.getAttribute("data-endpoint") || "").trim();
 
+  /* Захист від ботів */
+  var loadedAt = Date.now();
+  var MIN_FILL_MS = 2500;
+  function looksLikeBot() {
+    var hp = form.querySelector('input[name="_gotcha"]');
+    if (hp && hp.value) return true;                 // honeypot заповнено
+    if (Date.now() - loadedAt < MIN_FILL_MS) return true; // надто швидко для людини
+    return false;
+  }
+
   /* Демо-режим: endpoint не заданий. Нічого не надсилаємо і не вдаємо,
      що заявку прийнято — просто чесно про це повідомляємо. */
   var isDemo = !endpoint;
   if (isDemo) {
     wrap.classList.add("is-demo");
-    fineEl.textContent = "Демо-режим: дані не надсилаються і не зберігаються.";
+    fineEl.innerHTML = 'Демо-режим: дані не надсилаються і не зберігаються. '
+      + '<a href="privacy.html">Політика приватності</a> — шаблон для реального запуску.';
   }
 
   function setGroup(group, on) {
@@ -1275,6 +1309,10 @@
     ev.preventDefault();
     errorEl.style.display = "none";
     if (!form.checkValidity()) { form.reportValidity(); return; }
+
+    /* Бот: не надсилаємо нічого, показуємо «успіх», щоб не підказувати,
+       що спрацював захист */
+    if (looksLikeBot()) { showPanel(successEl); return; }
 
     /* Демо: жодного запиту, жодного «дякуємо» — чесне пояснення */
     if (isDemo) { showPanel(demoEl); return; }

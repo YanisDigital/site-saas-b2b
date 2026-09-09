@@ -1,0 +1,247 @@
+<!doctype html>
+<!--
+  ПОЛІТИКА ПРИВАТНОСТІ — шаблон.
+  Перед реальним запуском заповнити всі [плейсхолдери]:
+    [Назва], [юридична особа / ФОП], [адреса], [email для звернень],
+    [дата останнього оновлення], [строк зберігання], [сервіс форми],
+    [хостинг]. Після заповнення прибрати блок .demo-banner.
+  Це не юридична консультація — фінальний текст варто звірити з юристом
+  під конкретну юрисдикцію та набір інструментів.
+-->
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#FBFBF9">
+<meta name="robots" content="noindex">
+<!-- [Назва] -->
+<title>Політика приватності — [Назва]</title>
+<meta name="description" content="Як [Назва] обробляє персональні дані, залишені через форму заявки на beta-доступ.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+
+<link rel="preload" href="assets/fonts/ibm-plex-sans-400-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/ibm-plex-sans-600-cyrillic.woff2" as="font" type="font/woff2" crossorigin>
+
+<style>
+  /* Шрифти — ті самі self-hosted файли, що й на головній */
+  @font-face{font-family:'IBM Plex Mono';font-weight:500;font-display:swap;src:url('assets/fonts/ibm-plex-mono-500-cyrillic.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:'IBM Plex Mono';font-weight:500;font-display:swap;src:url('assets/fonts/ibm-plex-mono-500-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+2122,U+2191,U+2193,U+2212}
+  @font-face{font-family:'IBM Plex Sans';font-weight:400;font-display:swap;src:url('assets/fonts/ibm-plex-sans-400-cyrillic.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:'IBM Plex Sans';font-weight:400;font-display:swap;src:url('assets/fonts/ibm-plex-sans-400-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122}
+  @font-face{font-family:'IBM Plex Sans';font-weight:600;font-display:swap;src:url('assets/fonts/ibm-plex-sans-600-cyrillic.woff2') format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+  @font-face{font-family:'IBM Plex Sans';font-weight:600;font-display:swap;src:url('assets/fonts/ibm-plex-sans-600-latin.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+2000-206F,U+20AC,U+2122}
+
+  :root{
+    --bg:#FBFBF9;--surface:#FFFFFF;--ink:#10131A;--ink-mid:#3A3F4A;--ink-soft:#5D626D;
+    --line:#E4E3DE;--line-strong:#D2D1CA;--accent:#3B44F6;--accent-press:#2A32D6;
+    --footer-bg:#10131A;--footer-ink:#F2F2EE;--footer-soft:#8B909C;
+    --notice-bg:#FDF6E4;--notice-line:#E7D6A8;--notice-ink:#6B5518;
+    --font-sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.7;-webkit-font-smoothing:antialiased}
+  @media (min-width:768px){ body{font-size:17px} }
+  a{color:var(--accent);text-underline-offset:2px}
+  a:hover{color:var(--accent-press)}
+  ::selection{background:var(--accent);color:#fff}
+  :focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px}
+
+  .wrap{max-width:760px;margin-inline:auto;padding-inline:20px}
+  @media (min-width:768px){ .wrap{padding-inline:24px} }
+
+  .site-header{border-bottom:1px solid var(--line);position:sticky;top:0;z-index:10;
+    background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .site-header .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .wordmark{font-weight:600;font-size:17px;letter-spacing:-.03em;display:inline-flex;align-items:center;gap:7px;color:var(--ink)}
+  .wordmark i{width:9px;height:9px;border:2px solid var(--accent);border-radius:2px}
+  .back{font-family:var(--font-mono);font-size:12px;letter-spacing:.03em;color:var(--ink-soft)}
+  .back:hover{color:var(--ink)}
+
+  main{padding-block:56px 40px}
+  @media (min-width:768px){ main{padding-block:80px 56px} }
+
+  .eyebrow{font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--ink-soft);display:block;margin-bottom:16px}
+  h1{font-weight:600;letter-spacing:-.03em;line-height:1.1;font-size:clamp(2rem,5vw,2.9rem);margin-bottom:14px}
+  .updated{font-family:var(--font-mono);font-size:12px;color:var(--ink-soft);letter-spacing:.02em}
+
+  .demo-banner{
+    margin:28px 0 8px;background:var(--notice-bg);border:1px solid var(--notice-line);
+    color:var(--notice-ink);border-radius:12px;padding:18px 20px;
+    font-family:var(--font-mono);font-size:12.5px;line-height:1.65;letter-spacing:.01em;
+  }
+  .demo-banner b{display:block;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px}
+
+  .lead{color:var(--ink-mid);margin:28px 0 8px}
+
+  section.doc{border-top:1px solid var(--line);padding-top:26px;margin-top:34px}
+  section.doc h2{font-size:1.2rem;font-weight:600;letter-spacing:-.01em;margin-bottom:12px;display:flex;gap:12px}
+  section.doc h2 span{font-family:var(--font-mono);font-size:.8em;color:var(--accent);font-weight:500;flex:0 0 auto;padding-top:.15em}
+  section.doc p{margin-bottom:12px;color:var(--ink-mid)}
+  section.doc p:last-child{margin-bottom:0}
+  section.doc ul{margin:0 0 12px;padding-left:22px;color:var(--ink-mid)}
+  section.doc li{margin-bottom:6px}
+  section.doc strong{color:var(--ink);font-weight:600}
+  .ph{background:#EEEFFF;color:var(--accent-press);font-family:var(--font-mono);font-size:.86em;
+    padding:1px 6px;border-radius:4px;white-space:nowrap}
+  @media (max-width:420px){ .ph{white-space:normal} }
+
+  .site-footer{background:var(--footer-bg);color:var(--footer-soft);margin-top:56px;padding-block:40px;
+    font-family:var(--font-mono);font-size:12px;letter-spacing:.02em}
+  .site-footer .wrap{display:flex;flex-wrap:wrap;gap:12px 24px;justify-content:space-between}
+  .site-footer a{color:var(--footer-soft)}
+  .site-footer a:hover{color:#fff}
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <!-- [Назва] -->
+    <a href="index.html" class="wordmark"><i aria-hidden="true"></i>[Назва]</a>
+    <a href="index.html" class="back">← на головну</a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <span class="eyebrow">Політика приватності</span>
+    <h1>Як ми поводимося з вашими даними</h1>
+    <p class="updated">Редакція від <span class="ph">[дата останнього оновлення]</span></p>
+
+    <!-- DEMO-BANNER: прибрати при реальному запуску, коли форму підключено -->
+    <p class="demo-banner">
+      <b>Демонстраційний проєкт</b>
+      Це приклад із портфоліо. Форма заявки не підключена до жодного сервісу:
+      введені в неї дані нікуди не надсилаються і ніде не зберігаються.
+      Текст нижче — шаблон політики, який діятиме після реального запуску;
+      місця у <span class="ph">[дужках]</span> заповнюються перед публікацією.
+    </p>
+
+    <p class="lead">
+      Ця політика описує, які персональні дані збирає <span class="ph">[Назва]</span>
+      через форму заявки на beta-доступ, навіщо вони потрібні, скільки зберігаються
+      і які права ви маєте щодо них.
+    </p>
+
+    <section class="doc">
+      <h2><span>01</span>Хто відповідає за ваші дані</h2>
+      <p>
+        Володілець і розпорядник персональних даних — <span class="ph">[юридична особа / ФОП, повна назва]</span>,
+        <span class="ph">[адреса реєстрації]</span>. Питання щодо обробки даних —
+        <span class="ph">[email для звернень]</span>.
+      </p>
+    </section>
+
+    <section class="doc">
+      <h2><span>02</span>Які дані ми збираємо</h2>
+      <p>Лише те, що ви самі вводите у форму заявки:</p>
+      <ul>
+        <li><strong>обов'язково:</strong> ім'я; пошта або Telegram; тип користувача; опис того, що ви хочете відстежувати;</li>
+        <li><strong>за бажанням:</strong> сфера діяльності чи професія; джерела, які ви моніторите зараз; назва компанії; посада; напрями моніторингу; приблизна кількість користувачів; хто користуватиметься системою.</li>
+      </ul>
+      <p>
+        Ми не збираємо спеціальні категорії даних і не використовуємо прихованого
+        відстеження. Технічних логів веб-сервера (IP, час запиту) може торкатися
+        наш хостинг — див. пункт 7.
+      </p>
+    </section>
+
+    <section class="doc">
+      <h2><span>03</span>Навіщо і на якій підставі</h2>
+      <p>
+        Дані потрібні виключно для того, щоб опрацювати вашу заявку: зв'язатися з вами,
+        оцінити сценарій використання й відкрити доступ до beta.
+      </p>
+      <p>
+        Правова підстава — вжиття заходів за вашим запитом до укладення договору
+        та наш законний інтерес у формуванні списку перших користувачів
+        (ст. 6 GDPR; ст. 11 Закону України «Про захист персональних даних»).
+        Надсилаючи форму, ви підтверджуєте, що ознайомились із цією політикою.
+      </p>
+      <p>Ми не використовуємо ваші дані для реклами й не передаємо їх третім особам для їхніх цілей.</p>
+    </section>
+
+    <section class="doc">
+      <h2><span>04</span>Кому дані можуть передаватися</h2>
+      <ul>
+        <li><strong>Сервіс обробки форми</strong> — <span class="ph">[сервіс форми]</span>: приймає та зберігає заявки. Якщо сервіс розташований поза ЄС/Україною, передавання відбувається на основі стандартних договірних положень.</li>
+        <li><strong>Хостинг сайту</strong> — <span class="ph">[GitHub Pages / інший]</span>: обробляє технічні запити до сторінки.</li>
+      </ul>
+      <p>Більше нікому. Ми не продаємо й не здаємо в оренду персональні дані.</p>
+    </section>
+
+    <section class="doc">
+      <h2><span>05</span>Скільки зберігаються дані</h2>
+      <p>
+        Заявки зберігаємо до <span class="ph">[строк, напр. 12 місяців]</span> з моменту
+        отримання або до вашого запиту про видалення — залежно від того, що настане раніше.
+        Після цього дані видаляються або знеособлюються.
+      </p>
+    </section>
+
+    <section class="doc">
+      <h2><span>06</span>Ваші права</h2>
+      <p>Ви можете:</p>
+      <ul>
+        <li>отримати копію своїх даних і дізнатися, як вони обробляються;</li>
+        <li>виправити неточні дані;</li>
+        <li>вимагати видалення даних або обмеження обробки;</li>
+        <li>заперечити проти обробки на підставі законного інтересу;</li>
+        <li>відкликати згоду — це не впливає на законність обробки до відкликання;</li>
+        <li>подати скаргу до наглядового органу: в Україні — Уповноважений Верховної Ради України з прав людини; в ЄС — орган захисту даних за місцем проживання.</li>
+      </ul>
+      <p>Щоб скористатися будь-яким правом, напишіть на <span class="ph">[email для звернень]</span>. Відповідаємо протягом <span class="ph">[строк, напр. 30 днів]</span>.</p>
+    </section>
+
+    <section class="doc">
+      <h2><span>07</span>Кукі, аналітика та шрифти</h2>
+      <p>
+        Сайт не встановлює кукі й не використовує рекламних чи аналітичних трекерів.
+        Шрифти розміщені на нашому ж домені, тому під час перегляду сторінки ваш
+        браузер не звертається до сторонніх сервісів і ваша IP-адреса їм не передається.
+      </p>
+      <p>
+        Якщо в майбутньому ми додамо аналітику, це буде інструмент без кукі та без
+        збору персональних даних, і цей пункт оновиться.
+      </p>
+    </section>
+
+    <section class="doc">
+      <h2><span>08</span>Захист даних</h2>
+      <p>
+        Сторінка працює лише через HTTPS. Доступ до отриманих заявок мають лише особи,
+        яким він потрібен для опрацювання. Ми вживаємо розумних технічних та
+        організаційних заходів, але жоден спосіб передавання в інтернеті не є абсолютно захищеним.
+      </p>
+    </section>
+
+    <section class="doc">
+      <h2><span>09</span>Зміни до політики</h2>
+      <p>
+        Актуальна редакція завжди на цій сторінці; дата вгорі відображає останнє оновлення.
+        Про суттєві зміни ми повідомимо тих, чиї заявки на той момент зберігаються.
+      </p>
+    </section>
+
+    <section class="doc">
+      <h2><span>10</span>Контакт</h2>
+      <p>
+        З будь-яких питань щодо приватності — <span class="ph">[email для звернень]</span>,
+        <span class="ph">[Назва]</span>, <span class="ph">[юридична особа / ФОП]</span>.
+      </p>
+    </section>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© 2026 <!-- [Назва] -->[Назва]</span>
+    <a href="index.html">← на головну</a>
+  </div>
+</footer>
+
+</body>
+</html>
